@@ -1,5 +1,6 @@
 const app = require("express")();
 const fs = require('fs-extra');
+const PDFDocument = require('pdfkit');
 import aws from 'aws-sdk';
 
 let chrome = {};
@@ -89,6 +90,12 @@ app.get("/api", async (req, res) => {
     await browser.close();
     
     const timestamp = Date.now();
+    const doc = new PDFDocument();
+    //use the tmp serverless function folder to create the write stream for the pdf
+    let writeStream = fs.createWriteStream(`/tmp/${timestamp}.pdf`);
+    doc.pipe(writeStream);
+    doc.text('title');
+    doc.end();
 
     writeStream.on('finish', function () {
       //once the doc stream is completed, read the file from the tmp folder
