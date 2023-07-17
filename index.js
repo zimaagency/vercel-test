@@ -150,7 +150,9 @@ app.get("/api", async (req, res) => {
   }
 });
 
-app.post('/api/generate-pdf', async (req, res) => {
+app.post('/generate-pdf', async (req, res) => {
+
+ 
 
   let options = {};
 
@@ -165,14 +167,11 @@ app.post('/api/generate-pdf', async (req, res) => {
   }
 
   try {
+
+
     const { config, html } = req.body;
-
-    // Launch a headless Chrome browser
     const browser = await puppeteer.launch(options);
-
-    // Create a new page
     const page = await browser.newPage();
-
     // Set the page dimensions and margin
     const { width, height, margin } = config;
     await page.setViewport({
@@ -186,7 +185,6 @@ app.post('/api/generate-pdf', async (req, res) => {
 
     // Set the page content with the provided HTML
     await page.setContent(html);
-
     // Generate the PDF with the specified configuration
     const pdf = await page.pdf({
       format: 'A4',
@@ -205,29 +203,68 @@ app.post('/api/generate-pdf', async (req, res) => {
 
     // Close the browser
     await browser.close();
-
-    // Generate a unique file name
+    
     const timestamp = Date.now();
-    const outputPath = `output_${timestamp}.pdf`;
+    const doc = new PDFDocument();
+    //use the tmp serverless function folder to create the write stream for the pdf
+    let writeStream = fs.createWriteStream(`/tmp/${timestamp}.pdf`);
+    doc.pipe(writeStream);
+    doc.text('title');
+    doc.end();
+
+    writeStream.on('finish', function () {
+      //once the doc stream is completed, read the file from the tmp folder
+      const fileContent = pdf;
+      //create the params for the aws s3 bucket
+      var params = {
+        Key: `real_${timestamp}.pdf`,
+        Body: fileContent,
+        Bucket: 'bubble-upload-s3-bucket',
+        ContentType: 'application/pdf',
+      };
+  
+      //Your AWS key and secret pulled from environment variables
+      const s3 = new aws.S3({
+        accessKeyId: process.env.YOUR_AWS_KEY,
+        secretAccessKey: process.env.YOUR_AWS_SECRET,
+      });
+  
+  
+      s3.putObject(params, function (err, response) {
+        res.status(200).json({ response: `File ${timestamp} saved to S3` });
+      });
+    });
+
+    
+    // Generate a unique file name
+
+    //const outputPath = `${os.tmpdir()}/output_${timestamp}.pdf`;
 
     // Write the PDF to the specified file path
-    const writeStream = fs.createWriteStream(outputPath);
-    writeStream.write(pdf);
-    writeStream.end();
+    //const writeStream = fs.createWriteStream(outputPath);
+    //writeStream.write(pdf);
+    //writeStream.end();
 
-    writeStream.on('finish', () => {
-      console.log('PDF saved successfully:', outputPath);
-      res.json({ success: true, outputPath });
-    });
+    //writeStream.on('finish', () => {
+    //  console.log('PDF saved successfully:', outputPath);
+    //  res.json({ success: true, outputPath });
+    //});
 
-    writeStream.on('error', (error) => {
-      console.error('PDF generation failed:', error);
-      res.status(500).json({ success: false, error: error });
-    });
-  } catch (error) {
-    console.error('PDF generation failed:', error);
-    res.status(500).json({ success: false, error: error });
+    //writeStream.on('error', (error) => {
+    //  console.error('PDF generation failed:', error);
+    //  res.status(500).json({ success: false, error: error });
+    //});
+  
+
+
+
+
+  } catch (err) {
+    console.error(err);
+    return null;
   }
+
+
 });
 
 
