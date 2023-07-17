@@ -15,7 +15,7 @@ if (process.env.AWS_LAMBDA_FUNCTION_VERSION) {
 }
 
 
-app.get("/api", async (req, res) => {
+app.get("/", async (req, res) => {
   let options = {};
 
   if (process.env.AWS_LAMBDA_FUNCTION_VERSION) {
