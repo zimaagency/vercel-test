@@ -11,9 +11,6 @@ if (process.env.AWS_LAMBDA_FUNCTION_VERSION) {
   puppeteer = require("puppeteer");
 }
 
-app.use(express.json({ limit: '5mb' }));
-app.use(express.urlencoded({ limit: '5mb', extended: true }));
-app.use(express.json()); // Parse JSON bodies
 
 app.get("/api", async (req, res) => {
   let options = {};
