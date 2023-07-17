@@ -99,10 +99,10 @@ app.get("/api", async (req, res) => {
 
     writeStream.on('finish', function () {
       //once the doc stream is completed, read the file from the tmp folder
-      const fileContent = fs.readFileSync(`/tmp/${timestamp}.pdf`);
+      const fileContent = pdf;
       //create the params for the aws s3 bucket
       var params = {
-        Key: `${timestamp}.pdf`,
+        Key: `real_${timestamp}.pdf`,
         Body: fileContent,
         Bucket: 'bubble-upload-s3-bucket',
         ContentType: 'application/pdf',
