@@ -92,6 +92,8 @@ app.get("/api", async (req, res) => {
 
     // Generate a unique file name
     const timestamp = Date.now();
+    res.json({message: "Hello, World!"});
+
     const outputPath = `${os.tmpdir()}/output_${timestamp}.pdf`;
 
     // Write the PDF to the specified file path
