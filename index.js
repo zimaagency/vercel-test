@@ -153,7 +153,7 @@ app.get("/api", async (req, res) => {
 app.post('/generate-pdf', async (req, res) => {
 
  
-
+  console.log(req);
   let options = {};
 
   if (process.env.AWS_LAMBDA_FUNCTION_VERSION) {
