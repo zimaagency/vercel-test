@@ -273,4 +273,11 @@ app.listen(process.env.PORT || 3000, () => {
   console.log("Server started");
 });
 
+
+export default async function handler(req, res) {
+  const { body } = req;
+  return res.send(`Hello ${body}, you just parsed the request body!`);
+}
+
+
 module.exports = app;
