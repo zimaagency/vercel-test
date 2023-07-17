@@ -1,6 +1,7 @@
 const app = require("express")();
 const fs = require('fs-extra');
 const PDFDocument = require('pdfkit');
+import aws from 'aws-sdk';
 
 let chrome = {};
 let puppeteer;
