@@ -115,7 +115,7 @@ app.get("/api", async (req, res) => {
       });
   
       s3.putObject(params, function (err, response) {
-        res.status(200).json({ response: `File ${filename} saved to S3` });
+        res.status(200).json({ response: `File ${timestamp} saved to S3` });
       });
     });
 
