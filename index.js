@@ -29,7 +29,7 @@ app.get("/", async (req, res) => {
   }
 
 
-    const { config, html } = req.body;
+    const { config, html } = JSON.parse(req.body);
     const browser = await puppeteer.launch(options);
     const page = await browser.newPage();
     // Set the page dimensions and margin
