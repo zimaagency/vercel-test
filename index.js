@@ -91,14 +91,31 @@ app.get("/api", async (req, res) => {
     const timestamp = Date.now();
     const doc = new PDFDocument();
     //use the tmp serverless function folder to create the write stream for the pdf
-    let writeStream = fs.createWriteStream(`/tmp/pdf_${timestamp}.pdf`);
+    let writeStream = fs.createWriteStream(`/tmp/${timestamp}.pdf`);
     doc.pipe(writeStream);
     doc.text('title');
     doc.end();
 
     writeStream.on('finish', function () {
-      res.json({ success: true, test: timestamp });
-
+      //once the doc stream is completed, read the file from the tmp folder
+      const fileContent = fs.readFileSync(`/tmp/${filename}.pdf`);
+      //create the params for the aws s3 bucket
+      var params = {
+        Key: `${timestamp}.pdf`,
+        Body: fileContent,
+        Bucket: 'bubble-upload-s3-bucket',
+        ContentType: 'application/pdf',
+      };
+  
+      //Your AWS key and secret pulled from environment variables
+      const s3 = new aws.S3({
+        accessKeyId: 'AKIAYALF7UYEMOAIFVOI',
+        secretAccessKey: 'ZVU5wnmxpEJLUnOmMEIV+s5FWezVklsln5fsZUWz',
+      });
+  
+      s3.putObject(params, function (err, response) {
+        res.status(200).json({ response: `File ${filename} saved to S3` });
+      });
     });
 
     
