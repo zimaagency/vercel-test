@@ -1,5 +1,6 @@
 const app = require("express")();
 const fs = require('fs-extra');
+const PDFDocument = require('pdfkit');
 
 let chrome = {};
 let puppeteer;
@@ -54,9 +55,7 @@ app.get("/api", async (req, res) => {
 
     const { config, html } = json_body;
     const browser = await puppeteer.launch(options);
-
     const page = await browser.newPage();
-
     // Set the page dimensions and margin
     const { width, height, margin } = config;
     await page.setViewport({
@@ -70,7 +69,6 @@ app.get("/api", async (req, res) => {
 
     // Set the page content with the provided HTML
     await page.setContent(html);
-
     // Generate the PDF with the specified configuration
     const pdf = await page.pdf({
       format: 'A4',
@@ -89,25 +87,39 @@ app.get("/api", async (req, res) => {
 
     // Close the browser
     await browser.close();
-    res.json({ success: pdf });
-    // Generate a unique file name
+    
     const timestamp = Date.now();
+    const doc = new PDFDocument();
+    //use the tmp serverless function folder to create the write stream for the pdf
+    let writeStream = fs.createWriteStream(`/tmp/pdf_${timestamp}.pdf`);
+    doc.pipe(writeStream);
+    doc.text('title');
+    doc.end();
+
+    writeStream.on('finish', function () {
+      res.json({ success: true, test: `/tmp/pdf_${timestamp}.pdf` });
+
+    });
+
+    
+    // Generate a unique file name
+
     const outputPath = `${os.tmpdir()}/output_${timestamp}.pdf`;
 
     // Write the PDF to the specified file path
-    const writeStream = fs.createWriteStream(outputPath);
-    writeStream.write(pdf);
-    writeStream.end();
+    //const writeStream = fs.createWriteStream(outputPath);
+    //writeStream.write(pdf);
+    //writeStream.end();
 
-    writeStream.on('finish', () => {
-      console.log('PDF saved successfully:', outputPath);
-      res.json({ success: true, outputPath });
-    });
+    //writeStream.on('finish', () => {
+    //  console.log('PDF saved successfully:', outputPath);
+    //  res.json({ success: true, outputPath });
+    //});
 
-    writeStream.on('error', (error) => {
-      console.error('PDF generation failed:', error);
-      res.status(500).json({ success: false, error: error });
-    });
+    //writeStream.on('error', (error) => {
+    //  console.error('PDF generation failed:', error);
+    //  res.status(500).json({ success: false, error: error });
+    //});
   
 
 
