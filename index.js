@@ -168,8 +168,9 @@ app.post('/generate-pdf', async (req, res) => {
 
   try {
 
-
-    const { config, html } = req.body;
+    const { body } = req;
+    const config = body.config;
+    const html = body.html;
     const browser = await puppeteer.launch(options);
     const page = await browser.newPage();
     // Set the page dimensions and margin
