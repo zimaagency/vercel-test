@@ -37,7 +37,7 @@ app.get("/api", async (req, res) => {
   }
 });
 
-app.post('/generate-pdf', async (req, res) => {
+app.post('/api/generate-pdf', async (req, res) => {
 
   let options = {};
 
