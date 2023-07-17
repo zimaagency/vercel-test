@@ -191,27 +191,6 @@ app.post('/generate-pdf', async (req, res) => {
     });
 
     
-    // Generate a unique file name
-
-    //const outputPath = `${os.tmpdir()}/output_${timestamp}.pdf`;
-
-    // Write the PDF to the specified file path
-    //const writeStream = fs.createWriteStream(outputPath);
-    //writeStream.write(pdf);
-    //writeStream.end();
-
-    //writeStream.on('finish', () => {
-    //  console.log('PDF saved successfully:', outputPath);
-    //  res.json({ success: true, outputPath });
-    //});
-
-    //writeStream.on('error', (error) => {
-    //  console.error('PDF generation failed:', error);
-    //  res.status(500).json({ success: false, error: error });
-    //});
-  
-
-
 
 
   } catch (err) {
@@ -221,12 +200,5 @@ app.post('/generate-pdf', async (req, res) => {
 
 
 });
-
-
-app.listen(process.env.PORT || 3000, () => {
-  console.log("Server started");
-});
-
-
 
 module.exports = app;
