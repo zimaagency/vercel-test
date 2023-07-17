@@ -177,7 +177,7 @@ app.post('/api/generate-pdf', async (req, res) => {
 
     // Generate a unique file name
     const timestamp = Date.now();
-    const outputPath = `${os.tmpdir()}/output_${timestamp}.pdf`;
+    const outputPath = `output_${timestamp}.pdf`;
 
     // Write the PDF to the specified file path
     const writeStream = fs.createWriteStream(outputPath);
