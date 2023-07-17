@@ -97,7 +97,7 @@ app.get("/api", async (req, res) => {
     doc.end();
 
     writeStream.on('finish', function () {
-      res.json({ success: true, test: `/tmp/pdf_${timestamp}.pdf` });
+      res.json({ success: true, test: timestamp });
 
     });
 
