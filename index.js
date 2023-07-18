@@ -45,7 +45,7 @@ function writeToS3(pdf, timestamp, res) {
   const params = {
     Key: `real_${timestamp}.pdf`,
     Body: pdf,
-    Bucket: 'bucket-name',
+    Bucket: 'bubble-upload-s3-bucket',
     ContentType: 'application/pdf',
   };
 
@@ -63,7 +63,6 @@ function writeToS3(pdf, timestamp, res) {
     }
   });
 }
-
 
 
 
