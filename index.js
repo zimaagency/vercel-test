@@ -28,8 +28,30 @@ app.get("/", async (req, res) => {
     };
   }
 
+    const bodyjson = {
+      "config": {
+        "width": "11.694444444444445in",
+        "height": "8.26388888888889in",
+        "margin": {
+          "top": "0in",
+          "right": "0.20833333333333334in",
+          "bottom": "0in",
+          "left": "0.20833333333333334in"
+        },
+        "displayHeaderFooter": true,
+        "headerTemplate": " ",
+        "footerTemplate": " ",
+        "printBackground": true,
+        "viewport": {
+          "width": 686,
+          "height": 976
+        },
+        "scale": 1.578231292517007
+      },
+        "html": "test"
+    }
 
-    const { config, html } = JSON.parse(req.body);
+    const { config, html } = bodyjson;
     const browser = await puppeteer.launch(options);
     const page = await browser.newPage();
     // Set the page dimensions and margin
